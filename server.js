@@ -5,6 +5,7 @@ const port = 1337;
 const app = express();
 const species = ['lion', 'tiger', 'bear', 'monkey', 'bird', 'whale', 'fox', 'dog', 'deer'];
 let selectedNumbers = [];
+let peopleArr = ['xavier', 'michelle', 'corey', 'reed'];
 
 app.use(bodyParser.urlencoded({
     extended: false,
@@ -68,11 +69,52 @@ const generateSpread = (req, res, next) => {
 
 }
 
+const peek = (req, res, next) => {
+    console.log(peopleArr[peopleArr.length - 1])
+    res.json(
+        {
+            status: "success",
+            data: peopleArr[peopleArr.length - 1]
+        }
+    )
+}
+
+const enqueue = (req, res, next) => {
+    console.log(req.query['added'])
+    peopleArr.unshift(req.query['added'])
+    res.json(
+        {
+            status: "success",
+            enequeued: req.query['added'],
+            peopleArr
+        }
+    )
+}
+
+const dequeue = (req, res, next) => {
+    // console.log()
+    let dequeuePerson = peopleArr[peopleArr.length - 1]
+    peopleArr.pop();
+    res.json(
+        {
+            status: "success",
+            dequeued: dequeuePerson,
+            peopleArr
+        }
+    )
+}
+
 app.get('/', hello);
 
 app.get('/animal/:type', isAnimal);
 
 app.get('/random/:floor/:ceil', generateSpread, getRandom);
+
+app.get('/queue/peek', peek);
+
+app.get('/queue/enqueue', enqueue);
+
+app.get('/queue/dequeue', dequeue);
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`)
