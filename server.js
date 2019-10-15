@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const port = 1337;
 const app = express();
 const species = ['lion', 'tiger', 'bear', 'monkey', 'bird', 'whale', 'fox', 'dog', 'deer'];
-const selectedNumbers = [];
+let selectedNumbers = [];
 
 app.use(bodyParser.urlencoded({
     extended: false,
@@ -24,7 +24,7 @@ const hello = (req, res, next) => {
 
 const isAnimal = (req, res, next) => {
     const param = req.params.type;
-    console.log(query)
+    console.log(param)
     for(let value of species) {
         if (param === value) {
             res.json({
@@ -43,21 +43,27 @@ const isAnimal = (req, res, next) => {
 }
 
 const getRandom = (req, res, next) => {
-
-    let randomNum =  Math.floor(Math.random() * selectedNumbers.length - 1);
-
-    res.json(
-        selectedNumbers[randomNum]
-    )
+    // console.log(selectedNumbers)
+    const floor = req.params.floor;
+    const ceil = req.params.ceil;
+    let randomNum =  Math.floor(Math.random() * (selectedNumbers.length -1));
+    // console.log(selectedNumbers[randomNum])
+    res.json({
+        status: "Success",
+        range: [floor, ceil],
+        randPick: selectedNumbers[randomNum]
+    })
 }
 
 const generateSpread = (req, res, next) => {
+    selectedNumbers = [];
     const floor = req.params.floor;
     const ceil = req.params.ceil;
-
-    for(let i = floor; i <= ceil; i++) {
+    // console.log("floor", typeof floor)
+    for(let i = Number(floor); i <= Number(ceil); i++) {
         selectedNumbers.push(i)
     }
+    // console.log("selectedNumbers", selectedNumbers)
     next();
 
 }
@@ -66,7 +72,7 @@ app.get('/', hello);
 
 app.get('/animal/:type', isAnimal);
 
-app.get('/random/:floor/:ceil',generateSpread, getRandom);
+app.get('/random/:floor/:ceil', generateSpread, getRandom);
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`)

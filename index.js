@@ -1,20 +1,16 @@
-// document.addEventListener("DOMContentLoaded", async () => {
-//     console.log("DOM LOADED")
-//     let url = 'http://localhost:1337/animal'
-//     try{
-//         let response = await axios.post(url)
-//         console.log(response)
-//     } catch(err) {
-//         console.log(err)
-//     }
-// })
-
 document.addEventListener('DOMContentLoaded', () =>{
-    aniSearchButton().addEventListener('click', grabAniServer)
+    aniSearchButton().addEventListener('click', grabAniServer);
+    randomButton().addEventListener('click', grabRandomServer);
+
+
 })
 
 function aniSearchButton() {
     return document.querySelector("#animal-button")
+}
+
+function randomButton() {
+    return document.querySelector("#random-button")
 }
 
 function grabAniServer() {
@@ -30,6 +26,19 @@ function grabAniServer() {
     })
 }
 
+function grabRandomServer() {
+    let userFloor = document.querySelector("#num1").value;
+    let userCeil = document.querySelector("#num2").value;
+
+    fetch(`http://localhost:1337/random/${userFloor}/${userCeil}`)
+    .then((response) => {
+        return response.json();
+    })
+    .then(info => {
+        appendRandomNum(info);
+    })
+}
+
 function appendAnimal(resp) {
     console.log(resp);
         let animalReplyArea = document.querySelector('#animal-response');
@@ -39,17 +48,16 @@ function appendAnimal(resp) {
         newResp.innerText = resp.message;
         
         animalReplyArea.appendChild(newResp);
+}
 
-    // for(let i = 0; i < resp.length; i++) {
-    //     let giphyGifs = document.querySelector('#giphy');
+function appendRandomNum(resp) {
+    console.log('resp', resp);
+    let randomReplyArea = document.querySelector('#random-response');
 
-    //     let newImg = document.createElement('img');
+    let newResp = document.createElement('p');
+
+    newResp.innerText = `${resp.status}, the random number between ${resp.range[0]} and ${resp.range[1]} is ${resp.randPick}`;
     
-    //     newImg.src = resp[i];
-    //     newImg.id = "theseGifImages"
-        
-    //     giphyGifs.appendChild(newImg);
-    // }
-    // console.log("WORK", resp[10])
+    randomReplyArea.appendChild(newResp);
 }
 
