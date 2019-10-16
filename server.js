@@ -117,7 +117,7 @@ const handleQueue = (req,res, next) => {
         res.json(
             {
                 status: "success",
-                enequeued: req.query['added'],
+                enqueued: req.query['added'],
                 peopleArr
             }
         )
@@ -147,6 +147,8 @@ app.get('/random/:floor/:ceil', generateSpread, getRandom);
 // app.get('/queue/dequeue', dequeue);
 
 app.get('/queue/:action', handleQueue)
+
+app.post('/queue/:action', handleQueue)
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`)

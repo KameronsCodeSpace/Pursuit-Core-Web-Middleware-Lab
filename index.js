@@ -52,36 +52,24 @@ function grabRandomServer() {
     })
 }
 
-function grabPeekServer() {
-    fetch(`http://localhost:1337/queue/peek`)
-    .then((response) => {
-        return response.json();
-    })
-    .then(info => {
-        appendQueueStatus(info);
-    })
+async function grabPeekServer() {
+    const myURL = `http://localhost:1337/queue/peek`
+    const resp = await axios.get(myURL) 
+        appendPeekStatus(resp);
 }
 
-function grabDequeueServer() {
-    fetch(`http://localhost:1337/queue/dequeue`)
-    .then((response) => {
-        return response.json();
-    })
-    .then(info => {
-        appendQueueStatus(info);
-    })
+async function grabDequeueServer() {
+    const myURL = `http://localhost:1337/queue/dequeue`
+    const resp = await axios.get(myURL) 
+        appendDequeueStatus(resp);
 }
 
-function grabEnqueueServer() {
+async function grabEnqueueServer() {
     let enteredLine = document.querySelector("#line-input").value;
 console.log(enteredLine)
-    fetch(`http://localhost:1337/enqueue?added=${enteredLine}`)
-    .then((response) => {
-        return response.json();
-    })
-    .then(info => {
-        appendQueueStatus(info);
-    })
+        const myURL = `http://localhost:1337/queue/enqueue?added=${enteredLine}`
+        const resp = await axios.post(myURL) 
+        appendEnqueueStatus(resp);
 }
 
 function appendAnimal(resp) {
@@ -106,8 +94,35 @@ function appendRandomNum(resp) {
     randomReplyArea.appendChild(newResp);
 }
 
-function appendQueueStatus(resp) {
+function appendEnqueueStatus(resp) {
     console.log(resp);
-    let userNameEntered = document.querySelector('#status-update');
+    let lineStatusHolder = document.querySelector('#status-update');
+    let newStatus = document.createElement('p');
+
+    newStatus.innerText = `${resp.data.enqueued} added to list ${resp.data.peopleArr}`
+
+    lineStatusHolder.appendChild(newStatus);
+
+}
+
+function appendDequeueStatus(resp) {
+    console.log(resp);
+    let lineStatusHolder = document.querySelector('#status-update');
+    let newStatus = document.createElement('p');
+
+    newStatus.innerText = `${resp.data.dequeued} removed from list ${resp.data.peopleArr}`
+
+    lineStatusHolder.appendChild(newStatus);
+
+}
+
+function appendPeekStatus(resp) {
+    console.log(resp);
+    let lineStatusHolder = document.querySelector('#status-update');
+    let newStatus = document.createElement('p');
+
+    newStatus.innerText = `${resp.data.data} is in front of the line`
+
+    lineStatusHolder.appendChild(newStatus);
 
 }
